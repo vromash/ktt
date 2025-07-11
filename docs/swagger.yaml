@@ -1,0 +1,179 @@
+definitions:
+  exchange.ApplicationRequest:
+    properties:
+      agreeToBeScored:
+        type: boolean
+      agreeToDataSharing:
+        type: boolean
+      amount:
+        minimum: 0
+        type: number
+      dependents:
+        minimum: 0
+        type: integer
+      email:
+        type: string
+      maritalStatus:
+        enum:
+        - SINGLE
+        - MARRIED
+        - DIVORCED
+        - COHABITING
+        type: string
+      monthlyCreditLiabilities:
+        minimum: 0
+        type: number
+      monthlyExpenses:
+        minimum: 0
+        type: number
+      monthlyIncome:
+        minimum: 0
+        type: number
+      phone:
+        type: string
+    type: object
+  exchange.ApplicationResponse:
+    properties:
+      agreeToBeScored:
+        type: boolean
+      agreeToDataSharing:
+        type: boolean
+      amount:
+        type: number
+      dependents:
+        type: integer
+      email:
+        type: string
+      id:
+        type: string
+      maritalStatus:
+        type: string
+      monthlyCreditLiabilities:
+        type: number
+      monthlyExpenses:
+        type: number
+      monthlyIncome:
+        type: number
+      offers:
+        items:
+          $ref: '#/definitions/exchange.OfferResponse'
+        type: array
+      phone:
+        type: string
+    type: object
+  exchange.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  exchange.OfferResponse:
+    properties:
+      annualPercentageRate:
+        type: number
+      firstRepaymentDate:
+        type: string
+      monthlyPaymentAmount:
+        type: number
+      numberOfPayments:
+        type: integer
+      totalRepaymentAmount:
+        type: number
+    type: object
+info:
+  contact: {}
+  title: Financial Aggregator
+  version: 0.1.0
+paths:
+  /applications:
+    post:
+      consumes:
+      - application/json
+      description: Accepts a JSON body with application details, validates input,
+        and creates a new application.
+      parameters:
+      - description: Application request
+        in: body
+        name: application
+        required: true
+        schema:
+          $ref: '#/definitions/exchange.ApplicationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/exchange.ApplicationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exchange.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exchange.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit a new financing application
+      tags:
+      - applications
+  /applications/{id}:
+    get:
+      description: Returns application details and offers for the given application
+        ID.
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/exchange.ApplicationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exchange.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exchange.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get application by ID
+      tags:
+      - applications
+  /ws/applications/{id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Upgrades the HTTP connection to a WebSocket and subscribes the client
+        to real-time application updates. The client must provide the application ID
+        as a URL parameter. The connection is kept open until the client disconnects or an error occurs.
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/exchange.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Upgrades the HTTP connection to a WebSocket
+      tags:
+      - wss
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

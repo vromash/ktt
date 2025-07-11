@@ -1,0 +1,268 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Financial Aggregator",
+        "contact": {},
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/applications": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Accepts a JSON body with application details, validates input, and creates a new application.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Submit a new financing application",
+                "parameters": [
+                    {
+                        "description": "Application request",
+                        "name": "application",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ApplicationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ApplicationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/applications/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns application details and offers for the given application ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Get application by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Application ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ApplicationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/ws/applications/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Upgrades the HTTP connection to a WebSocket and subscribes the client\nto real-time application updates. The client must provide the application ID\nas a URL parameter. The connection is kept open until the client disconnects or an error occurs.",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "wss"
+                ],
+                "summary": "Upgrades the HTTP connection to a WebSocket",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Application ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/exchange.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "exchange.ApplicationRequest": {
+            "type": "object",
+            "properties": {
+                "agreeToBeScored": {
+                    "type": "boolean"
+                },
+                "agreeToDataSharing": {
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "dependents": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "email": {
+                    "type": "string"
+                },
+                "maritalStatus": {
+                    "type": "string",
+                    "enum": [
+                        "SINGLE",
+                        "MARRIED",
+                        "DIVORCED",
+                        "COHABITING"
+                    ]
+                },
+                "monthlyCreditLiabilities": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "monthlyExpenses": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "monthlyIncome": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "exchange.ApplicationResponse": {
+            "type": "object",
+            "properties": {
+                "agreeToBeScored": {
+                    "type": "boolean"
+                },
+                "agreeToDataSharing": {
+                    "type": "boolean"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "dependents": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "maritalStatus": {
+                    "type": "string"
+                },
+                "monthlyCreditLiabilities": {
+                    "type": "number"
+                },
+                "monthlyExpenses": {
+                    "type": "number"
+                },
+                "monthlyIncome": {
+                    "type": "number"
+                },
+                "offers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/exchange.OfferResponse"
+                    }
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "exchange.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "exchange.OfferResponse": {
+            "type": "object",
+            "properties": {
+                "annualPercentageRate": {
+                    "type": "number"
+                },
+                "firstRepaymentDate": {
+                    "type": "string"
+                },
+                "monthlyPaymentAmount": {
+                    "type": "number"
+                },
+                "numberOfPayments": {
+                    "type": "integer"
+                },
+                "totalRepaymentAmount": {
+                    "type": "number"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
