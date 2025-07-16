@@ -3,12 +3,17 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 func ReadConfig() *Config {
 	viper.SetConfigName("app-config")
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(".")
+
+	viper.SetEnvPrefix("KTT")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))

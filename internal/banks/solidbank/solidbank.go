@@ -3,6 +3,7 @@ package solidbank
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"financing-aggregator/internal/dto"
 	"fmt"
@@ -20,7 +21,11 @@ type SolidBank struct {
 func NewSolidBank(baseURL string) banks.Bank {
 	return &SolidBank{
 		BaseURL: baseURL,
-		Client:  &http.Client{},
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		},
 	}
 }
 

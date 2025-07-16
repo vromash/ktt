@@ -29,6 +29,5 @@ func (a *App) taskWrapper(name string, task func(context.Context)) func() {
 	return func() {
 		a.logger.Debug("cron job started", zap.String("name", name))
 		task(context.Background())
-		a.logger.Debug("cron job finished", zap.String("name", name))
 	}
 }

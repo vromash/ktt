@@ -1,18 +1,16 @@
+version: '3.8'
+
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "6666:6666"
+      - "${APP_PORT:-6666}:6666"
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=fin-agg-db
+      - KTT_DB_HOST=postgres
     depends_on:
-      - postgres_setup
+      - postgres_migrate
 
   postgres:
     image: postgres:15
@@ -31,15 +29,18 @@ services:
       timeout: 5s
       retries: 5
 
-  postgres_setup:
+  postgres_migrate:
     build:
       context: .
-      dockerfile: Dockerfile.setup
+      dockerfile: Dockerfile
     restart: "no"
+    environment:
+      - KTT_DB_HOST=postgres
     depends_on:
       postgres:
         condition: service_healthy
-    entrypoint: [ "bash", "-c", "migrations/migrate.sh"]
+    command:
+      - ./migrate
 
 volumes:
   postgres_data:

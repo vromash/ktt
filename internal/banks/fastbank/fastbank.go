@@ -3,6 +3,7 @@ package fastbank
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"financing-aggregator/internal/dto"
 	"fmt"
@@ -20,7 +21,11 @@ type FastBank struct {
 func NewFastBank(baseURL string) banks.Bank {
 	return &FastBank{
 		BaseURL: baseURL,
-		Client:  &http.Client{},
+		Client: &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		},
 	}
 }
 

@@ -2,10 +2,12 @@
 
 ## Quick Start
 
-The easiest way to run the service is with Docker Compose:
+The easiest way to run the service is with Docker Compose. Use `APP_PORT` to specify port on which application will run, by default application is available at `http://localhost:6666`
+
+This will start the backend service, PostgreSQL database and run database migration.
 
 ```sh
-docker-compose up -d
+docker-compose up
 ```
 
 To stop and remove everything:
@@ -14,7 +16,6 @@ To stop and remove everything:
 docker-compose down -v
 ```
 
-This will start the backend service and a PostgreSQL database. The backend will be available at `http://localhost:6666` by default.
 
 ---
 

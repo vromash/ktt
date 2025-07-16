@@ -4,12 +4,12 @@ port: 6666
 db:
   user: postgres
   password: postgres
-  host: postgres
+  host: localhost
   port: 5432
   name: fin-agg-db
 
 cronTabs:
-  checkOffersCronTab: "*/30 * * * * *"
+  checkOffersCronTab: "*/2 * * * * *"
 
 banks:
   fastBankURL: https://shop.stage.klix.app/api/FastBank
