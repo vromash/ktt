@@ -1,5 +1,5 @@
 CREATE TYPE marital_status_enum AS ENUM ('SINGLE', 'MARRIED', 'DIVORCED', 'COHABITING');
-CREATE TYPE offer_status_enum AS ENUM ('DRAFT', 'PROCESSED');
+CREATE TYPE offer_status_enum AS ENUM ('DRAFT', 'PROCESSED', 'DECLINED');
 
 CREATE TABLE IF NOT EXISTS applications
 (

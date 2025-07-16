@@ -14,6 +14,7 @@ const (
 
 	OfferStatusDraft     string = "DRAFT"
 	OfferStatusProcessed string = "PROCESSED"
+	OfferStatusDeclined  string = "DECLINED"
 )
 
 type Application struct {

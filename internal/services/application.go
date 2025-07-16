@@ -118,9 +118,18 @@ func (s *applicationService) UpdateApplicationStatuses(ctx context.Context) {
 			continue
 		}
 
-		err = s.offerRepo.Update(ctx, offer.ID.String(), mapper.MapOfferDTOToModel(bankOffer, offer.ApplicationID))
+		model := mapper.MapOfferDTOToModel(bankOffer, offer.ApplicationID)
+		if bankOffer.NumberOfPayments == 0 {
+			model.Status = models.OfferStatusDeclined
+		}
+
+		err = s.offerRepo.Update(ctx, offer.ID.String(), model)
 		if err != nil {
 			s.logger.Error("failed to get update offer", zap.Error(err), zap.String("bank", offer.Bank), zap.String("id", offer.ID.String()))
+			continue
+		}
+
+		if bankOffer.Status == models.OfferStatusDeclined {
 			continue
 		}
 
